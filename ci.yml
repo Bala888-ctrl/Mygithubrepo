@@ -1,0 +1,25 @@
+name: Python Code Check
+
+# 1. When should this robot run?
+on:
+  push:
+    branches: [ "main" ] # Runs every time you push code to the main branch
+  pull_request:
+    branches: [ "main" ]
+
+# 2. What should the robot do?
+jobs:
+  test-code:
+    runs-on: ubuntu-latest # The robot opens a brand new, empty Linux computer
+
+    steps:
+    - name: Copy our code
+      uses: actions/checkout@v4 # The robot copies your code into its computer
+
+    - name: Set up Python
+      uses: actions/setup-python@v5 # The robot installs Python
+      with:
+        python-version: '3.10'
+
+    - name: Run our test
+      run: python test_app.py # The robot runs the test file we made!
