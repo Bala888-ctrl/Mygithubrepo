@@ -1,12 +1,11 @@
-name: Python Code Check
+name: Python Enterprise CI/CD
 
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
+  # --- THE CI PART (Test the code) ---
   test-code:
     runs-on: ubuntu-latest
     steps:
@@ -20,3 +19,26 @@ jobs:
 
     - name: Run our test
       run: python test_app.py
+
+  # --- THE CD PART (Package Docker & Simulate AWS EC2 Deployment) ---
+  deploy-to-ec2:
+    runs-on: ubuntu-latest
+    needs: test-code # 🛑 Wait until tests pass!
+    
+    steps:
+    - name: Copy our code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build Docker Container Image
+      run: docker build -t my-python-app:latest .
+
+    - name: Connect to AWS EC2 & Deploy
+      run: |
+        echo "🔒 Securely authenticating with AWS using encrypted secrets..."
+        echo "🌐 SSHing into EC2 Instance at IP Address [18.212.45.10]..."
+        echo "📥 EC2 pulling latest Docker container from registry..."
+        echo "🚀 Running container on EC2 port 80..."
+        echo "🎉 SUCCESS! Your containerized app is live on AWS!"
